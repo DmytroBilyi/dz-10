@@ -1,6 +1,6 @@
-import exceprions.WrongAccountException;
-import exceprions.WrongCurrencyException;
-import exceprions.WrongOperationException;
+import exceptions.WrongAccountException;
+import exceptions.WrongCurrencyException;
+import exceptions.WrongOperationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +17,7 @@ public class BankApplication {
         add(new Account("accountId006", 50, "USD"));
     }};
 
+
     public void process(String accountId, int amount, String currency) throws Exception {
 
         accounts.stream().filter(account -> account.getId().equals(accountId))
@@ -31,6 +32,7 @@ public class BankApplication {
                 .filter(account -> account.getBalance() >= amount)
                 .findAny().orElseThrow(WrongOperationException::new);
 
+
         Account desiredAccount = accounts.stream()
                 .filter(account -> account.getId().equals(accountId))
                 .filter(account -> account.getCurrency().equals(currency))
@@ -43,7 +45,21 @@ public class BankApplication {
             throw new Exception();
         }
 
-
         desiredAccount.setBalance(desiredAccount.getBalance() - amount);
+    }
+    public void processValidation (String accountId, int amount, String currency) {
+        try {
+            process(accountId, amount, currency);
+        } catch (WrongAccountException wrongAccountException){
+            System.out.println("Такого акаунту не існує");
+        } catch (WrongCurrencyException wrongCurrencyException){
+            System.out.println("Акаунт має рахунок в іншій валюті");
+        } catch (WrongOperationException wrongOperationException){
+            System.out.println("Акаунт не має достатньо коштів");
+        } catch (Exception e){
+            System.out.println("Сталася помилка при процесінгу, спробуйте ще раз");
+        } finally {
+            System.out.println("Дякуємо, що скористалися нашим сервісом");
+        }
     }
 }
